@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ahmed Esam — Backend / .NET Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* =========================================================
+         WHAT'S NEW IN THIS VERSION (vs. the previous ones)
+         — read these comments as you go, that's the point —
+
+         1. grid-template-areas  → see .stats
+         2. CSS counters (counter-reset/increment) → see .timeline
+         3. <details>/<summary>  → see .certificates (zero-JS accordion)
+         4. :has()               → see .timeline-item.current
+         5. scroll-margin-top    → see "section { scroll-margin-top }"
+            (fixes anchor links landing under the sticky navbar)
+      ========================================================== */
+
+      :root {
+        --bg: #ffffff;
+        --bg-soft: #f6f8fb;
+        --text: #1c2230;
+        --text-muted: #667085;
+        --accent: #2563eb;
+        --accent-soft: #e8effe;
+        --border: #e6e9ef;
+        --radius: 12px;
+        --max-width: 1100px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        color: var(--text);
+        background: var(--bg);
+        line-height: 1.65;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Sora", sans-serif;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      ul {
+        list-style: none;
+      }
+
+      .container {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* Every section gets scroll-margin-top so that clicking a nav
+         link doesn't hide the section heading behind the sticky navbar. */
+      section {
+        scroll-margin-top: 90px;
+      }
+
+      .section-heading {
+        font-size: clamp(1.5rem, 3vw, 1.9rem);
+        margin-bottom: 36px;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        color: var(--accent);
+        background: var(--accent-soft);
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 999px;
+        margin-bottom: 16px;
+      }
+
+      /* =========================================================
+         NAVBAR
+      ========================================================== */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .navbar .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 24px;
+      }
+
+      .logo {
+        font-family: "Sora", sans-serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+      }
+
+      .logo span {
+        color: var(--accent);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 26px;
+        font-size: 0.92rem;
+      }
+
+      .nav-links a {
+        transition: color 0.2s ease;
+      }
+
+      .nav-links a:hover {
+        color: var(--accent);
+      }
+
+      /* =========================================================
+         HERO
+      ========================================================== */
+      .hero {
+        padding: 70px 0 60px;
+        background: var(--bg-soft);
+      }
+
+      .hero .container {
+        text-align: center;
+        max-width: 740px;
+      }
+
+      .hero h1 {
+        font-size: clamp(2rem, 4.5vw, 2.7rem);
+        margin-bottom: 16px;
+      }
+
+      .hero p {
+        color: var(--text-muted);
+        font-size: 1.05rem;
+        margin-bottom: 26px;
+      }
+
+      .btn {
+        display: inline-block;
+        background: var(--accent);
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding: 13px 28px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+      }
+
+      /* =========================================================
+         STATS — NEW TECHNIQUE: grid-template-areas
+
+         Instead of relying on source order (grid-template-columns
+         with repeat()), we name each cell and place items by name.
+         This makes the layout self-documenting: you can literally
+         read the shape of the grid in the "areas" string, and you
+         can reorder a piece visually without moving it in the HTML.
+      ========================================================== */
+      .stats {
+        padding: 60px 0;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-areas: "a b c d";
+        gap: 18px;
+      }
+
+      .stat-card {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        text-align: center;
+        transition: transform 0.2s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-4px);
+      }
+
+      /* Each card is assigned to a named area instead of a column number */
+      .stat-card:nth-child(1) {
+        grid-area: a;
+      }
+      .stat-card:nth-child(2) {
+        grid-area: b;
+      }
+      .stat-card:nth-child(3) {
+        grid-area: c;
+      }
+      .stat-card:nth-child(4) {
+        grid-area: d;
+      }
+
+      .stat-number {
+        font-family: "Sora", sans-serif;
+        font-weight: 700;
+        font-size: 2rem;
+        color: var(--accent);
+      }
+
+      .stat-label {
+        color: var(--text-muted);
+        font-size: 0.88rem;
+        margin-top: 6px;
+      }
+
+      /* On small screens, re-define the SAME areas in a 2x2 shape —
+         the HTML doesn't change at all, only the area layout does. */
+      @media (max-width: 700px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+          grid-template-areas:
+            "a b"
+            "c d";
+        }
+      }
+
+      /* =========================================================
+         ABOUT
+      ========================================================== */
+      .about {
+        padding: 60px 0;
+        background: var(--bg-soft);
+      }
+
+      .about p {
+        color: var(--text-muted);
+        max-width: 720px;
+      }
+
+      /* =========================================================
+         TIMELINE — NEW TECHNIQUE: CSS counters
+
+         counter-reset starts a counter at 0 on the parent list.
+         counter-increment adds 1 to it on every list item.
+         content: counter(name) then prints that running number —
+         no manual "01, 02, 03..." typed anywhere in the HTML.
+      ========================================================== */
+      .timeline {
+        padding: 60px 0;
+      }
+
+      .timeline-list {
+        counter-reset: step; /* start counting from 0 */
+        border-left: 2px solid var(--border);
+        margin-left: 10px;
+      }
+
+      .timeline-item {
+        counter-increment: step; /* +1 each item */
+        position: relative;
+        padding: 0 0 32px 32px;
+      }
+
+      .timeline-item::before {
+        content: counter(step); /* prints 1, 2, 3, 4... automatically */
+        position: absolute;
+        left: -19px;
+        top: 0;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--bg);
+        border: 2px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Sora", sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      /* NEW TECHNIQUE: :has() lets a PARENT be styled based on what's
+         INSIDE it. Here, any .timeline-item that contains an element
+         with class .current gets a highlighted number bubble —
+         without needing JavaScript or an extra wrapper class. */
+      .timeline-item:has(.current)::before {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: white;
+      }
+
+      .timeline-item h3 {
+        font-size: 1.05rem;
+        margin-bottom: 6px;
+      }
+
+      .timeline-item p {
+        color: var(--text-muted);
+        font-size: 0.93rem;
+        max-width: 560px;
+      }
+
+      .current {
+        color: var(--accent);
+        font-weight: 600;
+        font-size: 0.78rem;
+      }
+
+      /* =========================================================
+         CORE STRENGTHS — flexbox (kept simple on purpose)
+      ========================================================== */
+      .strengths {
+        padding: 60px 0;
+        background: var(--bg-soft);
+      }
+
+      .strengths-row {
+        display: flex;
+        gap: 22px;
+        flex-wrap: wrap;
+      }
+
+      .strength-card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        flex: 1 1 250px;
+      }
+
+      .strength-card h3 {
+        font-size: 1.05rem;
+        margin-bottom: 8px;
+        color: var(--accent);
+      }
+
+      .strength-card p {
+        color: var(--text-muted);
+        font-size: 0.92rem;
+      }
+
+      /* =========================================================
+         SKILLS — chip list
+      ========================================================== */
+      .skills {
+        padding: 60px 0;
+      }
+
+      .skill-group {
+        margin-bottom: 24px;
+      }
+
+      .skill-group h3 {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 12px;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .chip {
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 0.84rem;
+        font-weight: 500;
+        padding: 7px 13px;
+        border-radius: 8px;
+      }
+
+      /* =========================================================
+         CERTIFICATES — NEW TECHNIQUE: <details>/<summary>
+
+         This is a native HTML element pair that gives you a working
+         accordion/disclosure widget with ZERO JavaScript and ZERO
+         extra CSS required to function — the browser handles the
+         open/close state and keyboard support for you. The CSS below
+         is only for styling, not for making it work.
+      ========================================================== */
+      .certificates {
+        padding: 60px 0;
+        background: var(--bg-soft);
+      }
+
+      .cert-item {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        margin-bottom: 12px;
+        overflow: hidden;
+      }
+
+      .cert-item summary {
+        cursor: pointer;
+        padding: 18px 20px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        list-style: none; /* removes the default browser triangle */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      /* Hides the default disclosure triangle in WebKit browsers too */
+      .cert-item summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .cert-item summary::after {
+        content: "+";
+        color: var(--accent);
+        font-size: 1.2rem;
+        transition: transform 0.2s ease;
+      }
+
+      /* The [open] attribute is added by the browser automatically
+         when a <details> is expanded — no class toggling needed. */
+      .cert-item[open] summary::after {
+        content: "−";
+      }
+
+      .cert-body {
+        padding: 0 20px 18px;
+        color: var(--text-muted);
+        font-size: 0.92rem;
+      }
+
+      /* =========================================================
+         PROJECTS — CSS grid, auto-fit (same technique as before,
+         shown again here on purpose so you can compare it directly
+         with the named-areas approach used in .stats above)
+      ========================================================== */
+      .projects {
+        padding: 60px 0;
+      }
+
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 22px;
+      }
+
+      .project-card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        transition:
+          box-shadow 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .project-card:hover {
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+        transform: translateY(-4px);
+      }
+
+      .project-card h3 {
+        font-size: 1.02rem;
+        margin-bottom: 8px;
+      }
+
+      .project-card p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+      }
+
+      .project-tag {
+        display: inline-block;
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: var(--accent);
+        background: var(--accent-soft);
+        padding: 4px 10px;
+        border-radius: 6px;
+      }
+
+      /* =========================================================
+         CONTACT — no JavaScript: a mailto: link IS a fully working
+         "contact form" in the sense that it opens the visitor's
+         email client with the address pre-filled.
+      ========================================================== */
+      .contact {
+        padding: 60px 0;
+        background: var(--bg-soft);
+        text-align: center;
+      }
+
+      .contact p {
+        color: var(--text-muted);
+        max-width: 480px;
+        margin: 0 auto 24px;
+      }
+
+      .contact-links {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .contact-link {
+        border: 1px solid var(--border);
+        padding: 12px 22px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition:
+          border-color 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .contact-link:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      /* =========================================================
+         FOOTER
+      ========================================================== */
+      .footer {
+        text-align: center;
+        padding: 36px 0;
+        border-top: 1px solid var(--border);
+        color: var(--text-muted);
+        font-size: 0.85rem;
+      }
+
+      /* =========================================================
+         RESPONSIVE
+      ========================================================== */
+      @media (max-width: 640px) {
+        .nav-links {
+          display: none;
+        }
+
+        .timeline-list {
+          margin-left: 4px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="container">
+        <span class="logo">ahmed<span>.</span>esam</span>
+        <ul class="nav-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#timeline">Journey</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#certificates">Certificates</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+      <div class="container">
+        <span class="eyebrow">Full-Stack Developer — .NET & Angular</span>
+        <h1>Hi, I'm [ahmed esam]</h1>
+        <p>
+          A Computer Science student specializing in .NET backend and Angular
+          frontend development. Focused on Clean Architecture, REST APIs, and
+          building production-grade full-stack applications — preparing for my
+          first software engineering role.
+        </p>
+        <a class="btn" href="#contact">Say HI</a>
+      </div>
+    </header>
+
+    <!-- STATS -->
+    <section class="stats">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">250+</div>
+            <div class="stat-label">LeetCode Problems Solved</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">3+</div>
+            <div class="stat-label">.NET Portfolio Projects</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">3+</div>
+            <div class="stat-label">.NET Portfolio Projects</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">6+</div>
+            <div class="stat-label">Core Technologies</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about" id="about">
+      <div class="container">
+        <h2 class="section-heading">About My Learning Journey</h2>
+        <p>
+          I started my programming journey learning the fundamentals of Computer
+          Science, then moved through C++, OOP, and Data Structures. I
+          transitioned into .NET development, building REST APIs with ASP.NET
+          Core, EF Core, and Clean Architecture. Now I'm expanding into
+          full-stack territory with Angular and TypeScript.
+        </p>
+      </div>
+    </section>
+
+    <!-- TIMELINE -->
+    <section class="timeline" id="timeline">
+      <div class="container">
+        <h2 class="section-heading">Education Timeline</h2>
+        <div class="timeline-list">
+          <div class="timeline-item">
+            <h3>Foundations & OOP</h3>
+            <p>
+              Learned Computer Science fundamentals, C++, and Object-Oriented
+              Programming. Applied OOP by building a banking system project.
+            </p>
+          </div>
+          <div class="timeline-item">
+            <h3>Data Structures & Algorithms</h3>
+            <p>
+              Deep study of data structures, algorithm complexity, and problem
+              solving. Solved 250+ LeetCode problems across arrays, trees,
+              graphs, and dynamic programming.
+            </p>
+          </div>
+          <div class="timeline-item">
+            <h3>.NET Backend Development</h3>
+            <p>
+              Built production-style REST APIs using ASP.NET Core, EF Core, SQL
+              Server, JWT authentication, and Clean Architecture patterns.
+            </p>
+          </div>
+          <div class="timeline-item">
+            <h3>
+              Full-Stack — .NET & Angular <span class="current">— current</span>
+            </h3>
+            <p>
+              Expanding into full-stack development with Angular and TypeScript,
+              while building ServiGo — a multi-service booking platform as a
+              capstone project.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CORE STRENGTHS -->
+    <section class="strengths">
+      <div class="container">
+        <h2 class="section-heading">Core Strengths</h2>
+        <div class="strengths-row">
+          <div class="strength-card">
+            <h3>Backend Development</h3>
+            <p>
+              Strong in ASP.NET Core REST APIs, Clean Architecture, Domain
+              Services, JWT auth, and EF Core — focused on scalable,
+              maintainable backend systems.
+            </p>
+          </div>
+          <div class="strength-card">
+            <h3>Frontend Development</h3>
+            <p>
+              Building modern UIs with Angular and TypeScript. Comfortable with
+              reactive forms, routing, HTTP client, and consuming REST APIs
+              end-to-end.
+            </p>
+          </div>
+          <div class="strength-card">
+            <h3>Data Structures & Algorithms</h3>
+            <p>
+              Solid foundation in algorithms and data structures — applying the
+              right approach based on time/space complexity and real-world
+              requirements.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="skills" id="skills">
+      <div class="container">
+        <h2 class="section-heading">Skills</h2>
+        <div class="skill-group">
+          <h3>Core</h3>
+          <div class="chip-row">
+            <span class="chip">Data Structures</span>
+            <span class="chip">Algorithms</span>
+            <span class="chip">Problem Solving</span>
+            <span class="chip">OOP</span>
+            <span class="chip">SOLID</span>
+            <span class="chip">Clean Architecture</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Backend</h3>
+          <div class="chip-row">
+            <span class="chip">C# / .NET 9</span>
+            <span class="chip">ASP.NET Core</span>
+            <span class="chip">EF Core</span>
+            <span class="chip">ADO.NET</span>
+            <span class="chip">SQL Server</span>
+            <span class="chip">JWT Auth</span>
+            <span class="chip">SignalR</span>
+            <span class="chip">REST APIs</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Frontend</h3>
+          <div class="chip-row">
+            <span class="chip">Angular</span>
+            <span class="chip">TypeScript</span>
+            <span class="chip">HTML</span>
+            <span class="chip">CSS</span>
+            <span class="chip">JavaScript</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CERTIFICATES / COURSES -->
+    <section class="certificates" id="certificates">
+      <div class="container">
+        <h2 class="section-heading">Certificates & Courses</h2>
+        <details class="cert-item">
+          <summary>
+            Programming Fundamentals — Benha University
+          </summary>
+          <div class="cert-body">
+            Core programming and Computer Science fundamentals including C++ and
+            OOP principles.
+          </div>
+        </details>
+        <details class="cert-item">
+          <summary>Data Structures & Algorithms</summary>
+          <div class="cert-body">
+            In-depth study of data structures, algorithm design, and complexity
+            analysis with hands-on LeetCode practice.
+          </div>
+        </details>
+        <details class="cert-item">
+          <summary>ASP.NET Core Web API — Backend Development</summary>
+          <div class="cert-body">
+            REST API development with ASP.NET Core, EF Core, SQL Server, JWT
+            authentication, and Clean Architecture.
+          </div>
+        </details>
+        <details class="cert-item">
+          <summary>CSS Course — in progress</summary>
+          <div class="cert-body">
+            Full CSS course covering layout, responsive design, animations, and
+            modern techniques as part of the frontend roadmap.
+          </div>
+        </details>
+        <details class="cert-item">
+          <summary>Angular & TypeScript — in progress</summary>
+          <div class="cert-body">
+            Building modern single-page applications with Angular, covering
+            components, services, routing, reactive forms, and HTTP client.
+          </div>
+        </details>
+        
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="projects" id="projects">
+      <div class="container">
+        <h2 class="section-heading">Projects</h2>
+        <div class="projects-grid">
+          <div class="project-card">
+            <h3>Inventory Management System API</h3>
+            <p>
+              Enterprise-style IMS built with ASP.NET Core Web API, EF Core, and
+              SQL Server. Features Clean/Onion Architecture, Domain Services,
+              Order State Machine, Greedy Reservation logic, JWT + Refresh
+              Tokens, OTP, and PBKDF2-SHA512 password hashing.
+            </p>
+            <span class="project-tag"
+              >C# · ASP.NET Core · Clean Architecture</span
+            >
+          </div>
+
+          <div class="project-card">
+            <h3>ServiGo — Booking Platform</h3>
+            <p>
+              Full-stack multi-service booking platform with .NET 9 backend and
+              Angular frontend. Planned integrations include Stripe payments,
+              Cloudinary file uploads, MailKit emails, and SignalR real-time
+              notifications. Role-based access for customers, providers, and
+              admins.
+            </p>
+            <span class="project-tag"
+              >C# · ASP.NET Core · Angular · In Progress</span
+            >
+          </div>
+
+          <div class="project-card">
+            <h3>University Management System API</h3>
+            <p>
+              University Management API with ASP.NET Core and SQL Server.
+              Student enrollment, course registration, grading, transcript
+              generation, semester management, and role-based access control
+              with JWT authentication.
+            </p>
+            <span class="project-tag">C# · ASP.NET Core</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+      <div class="container">
+        <h2 class="section-heading">Get In Touch</h2>
+        <p>
+          Have an opportunity or just want to chat about .NET and full-stack
+          development? Reach out — I'd love to hear from you.
+        </p>
+        <div class="contact-links">
+          <a class="contact-link" href="mailto:your.email@example.com"
+            >✉ Email Me</a
+          >
+          <a
+            class="contact-link"
+            href="https://github.com/your-username"
+            target="_blank"
+            rel="noopener"
+            >⌬ GitHub</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container">[ahmed esam] — Frontend Practice © 2026</div>
+    </footer>
+  </body>
+</html>

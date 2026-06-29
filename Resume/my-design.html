@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CSS Practice</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playwrite+AU+VIC+Guides&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: weight;
+        font-style: normal;
+        background-color: white;
+      }
+
+      /* HERO SECTION */
+      .Main {
+        background:
+          linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3)),
+          url("Pic/opoy7.jpg") center/cover no-repeat;
+        color: white;
+        min-height: 100vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .MainContent {
+        width: 80%;
+        max-width: 900px;
+      }
+
+      .MainTitle {
+        background-color: rgba(0, 0, 0, 0.4);
+        padding: 30px;
+        border-radius: 15px;
+      }
+
+      .MainTitle h1 {
+        font-size: 60px;
+        font-weight: bold;
+        margin-bottom: 15px;
+      }
+
+      .MainTitle p {
+        font-size: 20px;
+        color: #e5e7eb;
+        margin-bottom: 25px;
+      }
+
+      .btn {
+        background-color: #063360;
+        color: white;
+
+        border: none;
+        padding: 15px 30px;
+
+        font-size: 18px;
+        border-radius: 10px;
+
+        cursor: pointer;
+
+        transition: 0.3s;
+      }
+
+      .btn:hover {
+        background-color: #0f62c9;
+        transform: scale(1.05);
+      }
+
+      /* INFO SECTION */
+      .info {
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+          url("image.jpg") repeat-x top / cover;
+
+        padding: 80px 20px;
+        text-align: center;
+      }
+
+      .info h2 {
+        font-size: 40px;
+        margin-bottom: 20px;
+        color: #111827;
+      }
+
+      .info p {
+        width: 70%;
+        margin: auto;
+
+        line-height: 1.8;
+        font-size: 18px;
+        color: #374151;
+      }
+
+      /* CARDS SECTION */
+      .cards {
+        padding: 80px 40px;
+        background-color: #f3f4f6;
+
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+      }
+
+      .card {
+        background-color: white;
+        width: 400px;
+
+        padding: 25px;
+        border-radius: 15px;
+
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: 0.3s;
+        font-size: medium;
+        outline-style: solid;
+        outline-width: 2px;
+        outline-color: lightyellow;
+      }
+
+      .card:hover {
+        box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.3);
+        transform: translateY(-10px);
+      }
+
+      .card h3 {
+        margin-bottom: 15px;
+        color: #1e3a8a;
+      }
+
+      .card p {
+        color: #4b5563;
+        line-height: 1.6;
+      }
+
+      .skills {
+        background-color: white;
+        display: flex;
+
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 60px 40px;
+      }
+
+      .skill {
+        display: inline-block;
+
+        padding: 10px 18px;
+        margin: 8px;
+        font-size: small;
+        border: 1px solid #d1d5db;
+        border-radius: 20px;
+
+        background-color: white;
+        color: #374151;
+
+        transition: 0.3s;
+      }
+
+      .skill span {
+        display: inline-block;
+        font-size: small;
+        padding: 8px 14px;
+        margin: 5px;
+        border: 1px solid #1e3a8a;
+        border-radius: 6px;
+        color: #1e3a8a;
+        box-shadow: 1px 1px 2px red;
+      }
+
+      .skill:hover {
+        transform: translateY(-2px);
+        border-color: #1e3a8a;
+        color: #1e3a8a;
+        box-shadow: 1px 1px 20px rgba(0, 0, 0, 0.4);
+      }
+
+      /* FOOTER */
+      .footer {
+        background-image: linear-gradient(to right, darkblue, darkred);
+        color: white;
+        text-align: center;
+        padding: 20px;
+        font-size: 20px;
+      }
+
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 24px;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+   
+      }
+
+      .grid-item {
+        background: whitesmoke;
+        padding: 24px;
+        border-radius: 25px;
+        text-align: left;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .grid-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 24px rgba(227, 239, 3, 0.12);
+        background-color: white;
+        transform: rotate(-1deg) translateX(3px) scale(1.05);
+      }
+
+      .grid-item h3 {
+        color: #1e3a8a;
+        margin-bottom: 12px;
+        font-size: 1.3rem;
+      }
+
+      .grid-item p {
+        color: #4b5563;
+        line-height: 1.8;
+        font-size: 0.95rem;
+      }
+      .gradient-text {
+        background: linear-gradient(
+          45deg,
+          rgb(245, 23, 134),
+          rgb(11, 180, 247),
+          rgb(245, 23, 134)
+        );
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        animation: flow 3s linear infinite;
+      }
+      @keyframes flow {
+        0% {
+          background-position: 0% center;
+        }
+        100% {
+          background-position: 200% center;
+        }
+      }
+      .avatar {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid sandybrown;
+        margin-bottom: 1rem;
+      }
+      .card-image {
+        width: 300px;
+        height: 200px;
+        object-fit: contain;
+        border: 4px solid #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba (0, 0, 0, 0.2);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HERO -->
+    <div class="Main">
+      <div class="MainContent">
+        <img src="Pic/Profile.jpg" alt="Profile" class="avatar" />
+        <div class="MainTitle">
+          <h1 class="gradient-text">Welcome to My Website</h1>
+          <p>
+            I am a Computer Science student specializing in .NET web and desktop
+            development.
+            <span style="color: lightyellow">
+              Currently, I am focusing on Data Structures, Algorithms, problem
+              solving, and modern web development.
+            </span>
+            I enjoy building practical applications and continuously improving
+            my programming skills through
+            <span style="color: lightcoral">hands-on projects</span>. My goal is
+            to become a better software engineer by learning new technologies,
+            writing clean and maintainable code, and creating
+            <span style="color: lightgreen">real-world projects</span>.
+          </p>
+
+          <button class="btn"><h3 class="gradient-text">Say HI</h3></button>
+        </div>
+      </div>
+    </div>
+    <!-- INFO -->
+    <div class="info">
+  <h2>About My Learning Journey</h2>
+  <p>
+    My learning journey has been focused on building a strong foundation in
+    Computer Science and software development. I enjoy exploring different
+    programming concepts, improving my problem-solving skills, and developing
+    practical applications. Over time, I have gained experience with desktop
+    and web development while continuously learning modern technologies and
+    best practices to become a better software engineer.
+  </p>
+</div>
+
+    <!-- CARDS -->
+    <div class="cards">
+      <div class="card">
+        <h3>Backend Development</h3>
+        <p>
+          Strong in backend development, business logic implementation, and
+          writing efficient, maintainable code with a focus on performance and
+          scalability.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Frontend Development</h3>
+        <p>
+          Capable of building modern user interfaces and continuously improving
+          design skills while using AI as a productivity tool.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Data Structures & Algorithms</h3>
+        <p>
+          Understanding how algorithms and data structures affect application
+          performance and choosing the right solution based on real-world
+          requirements.
+        </p>
+      </div>
+    </div>
+
+    <h2
+      style="
+        background-color: white;
+        text-align: center;
+        padding: 1.5rem 1.5rem;
+      "
+    >
+      Skills
+    </h2>
+    <!-- Skills -->
+    <div class="skills">
+      <div class="skill">
+        <h3>Core</h3>
+        <span>Data Structures</span>
+        <span>Algorithms</span> <br />
+        <span>Problem Solving</span>
+        <span>OOP</span>
+        <span>SOLID</span>
+      </div>
+
+      <div class="skill">
+        <h3>Web</h3>
+        <span>C#</span>
+        <span>Web API's</span>
+        <span>EF Core</span>
+        <span>ADO.NET</span> <br />
+        <span>SQL Server</span>
+        <span>HTML</span>
+        <span>CSS</span>
+      </div>
+    </div>
+
+    <h2
+      style="
+        background-color: white;
+        text-align: center;
+        padding: 1.5rem 1.5rem;
+      "
+    >
+      Projects
+    </h2>
+
+    <div class="grid-container">
+      <div class="grid-item">
+        <h3>Inventory Management System API</h3>
+        <p>
+          Developed an enterprise-style Inventory Management System using
+          ASP.NET Core Web API, Entity Framework Core, and SQL Server.
+          Implemented stock tracking, warehouse management, sales orders,
+          inventory adjustments, JWT authentication, and advanced business rules
+          using Clean Architecture principles.
+        </p>
+      </div>
+
+      <div class="grid-item">
+        <h3>University Management System API</h3>
+        <p>
+          Built a University Management System API using ASP.NET Core Web API
+          and SQL Server. Implemented student enrollment, course registration,
+          grading, transcript generation, semester management, and role-based
+          access control using JWT authentication and layered architecture.
+        </p>
+      </div>
+
+      <div class="grid-item">
+        <h3>E-Commerce Web Application</h3>
+        <p>
+          Developed a full-featured E-Commerce web application using ASP.NET
+          Core MVC, Entity Framework Core, SQL Server, and ASP.NET Identity.
+          Implemented authentication, product catalog management, shopping cart,
+          order processing, promotions, and an administrative dashboard
+          following MVC architecture and service-based business logic.
+        </p>
+      </div>
+    </div>
+
+    
+
+    <!-- FOOTER -->
+    <div class="footer">Frontend Practice © 2026</div>
+  </body>
+</html>

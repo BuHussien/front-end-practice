@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Responsive CV – HTML & CSS (Student Project)</title>
+
+    <style>
+      /* ── Theme Tokens (Light by default) ───────────────────────────── */
+      :root {
+        /* Palette */
+        --bg: #f7f7fb; /* Page background */
+        --card: #ffffff; /* Card/surface background */
+        --text: #1f2937; /* Primary text */
+        --muted: #556072; /* Secondary text */
+        --accent: #4f46e5; /* Brand/link accent (indigo) */
+        --accent-2: #22c55e; /* Secondary accent (green) */
+        --line: #e5e7eb; /* Hairline borders */
+
+        /* Shape & depth */
+        --radius: 16px; /* Global corner rounding */
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Soft elevation on light bg */
+
+        /* Spacing scale */
+        --space-1: 6px;
+        --space-2: 10px;
+        --space-3: 14px;
+        --space-4: 20px;
+        --space-5: 28px;
+        --space-6: 40px;
+
+        /* Layout cap */
+        --maxw: 1100px; /* Readable line length */
+      }
+
+      /* ── Manual Dark Theme (html[data-theme="dark"]) ───────────────── */
+      :root[data-theme="dark"] {
+        --bg: rgb(0, 0, 0);
+        --card: rgb(46, 8, 21);
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #8b93f9;
+        --accent-2: #34d399;
+        --line: #1f2a44;
+        --shadow: none; /* Reduce glow on dark surfaces */
+      }
+
+      /* ── System Dark (only if user hasn’t manually chosen) ─────────── */
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme]) {
+          --bg: #0b1220;
+          --card: #0f172a;
+          --text: #e5e7eb;
+          --muted: #9ca3af;
+          --accent: #8b93f9;
+          --accent-2: #34d399;
+          --line: #1f2a44;
+          --shadow: none;
+        }
+      }
+
+      /* ── Base / Resets ─────────────────────────────────────────────── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        font:
+          16px/1.6 system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Arial,
+          sans-serif;
+        color: var(--text);
+        /* Soft background decoration + solid token color */
+        background:
+          radial-gradient(
+            1200px 600px at 20% -10%,
+            rgba(79, 70, 229, 0.1),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 500px at 120% 10%,
+            rgba(34, 197, 94, 0.08),
+            transparent 60%
+          ),
+          var(--bg);
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .muted {
+        color: var(--muted);
+      }
+
+      /* ── Utility: small pill tag ───────────────────────────────────── */
+      .tag {
+        display: inline-block;
+        padding: 2px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px; /* pill shape */
+        font-size: 12px;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+        cursor: default;
+      }
+      .tag :hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(79, 70, 229, 0.2);
+      }
+
+      /* ── Shell & Card ──────────────────────────────────────────────── */
+      .wrapper {
+        max-width: var(--maxw);
+        margin: 40px auto;
+        padding: 0 var(--space-4);
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden; /* clip rounded corners on children */
+      }
+
+      /* ── Header (avatar | title/contact | toggle) ──────────────────── */
+      .header {
+        position: relative; /* anchor for absolute toggle */
+        display: grid;
+        grid-template-columns: 120px 1fr; /* avatar | info */
+        gap: var(--space-4);
+        padding: var(--space-5);
+        align-items: center;
+        background:
+          linear-gradient(135deg, rgba(79, 70, 229, 0.08), transparent 50%),
+          var(--card);
+        border-bottom: 1px solid var(--line);
+      }
+
+      /* Avatar (real image) */
+      .avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid lightyellow;
+      }
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* fill circle neatly */
+        object-position: center;
+      }
+
+      /* Title & subtitle */
+      .title-block h1 {
+        margin: 0;
+        font-size: clamp(28px, 5vw, 40px);
+        line-height: 1.2;
+      }
+      .title-block p {
+        margin: 6px 0 0;
+        font-size: 18px;
+      }
+
+      /* Contact row */
+      .contact {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 18px;
+        margin-top: var(--space-3);
+        font-size: 14px;
+      }
+      .contact a,
+      .contact span {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .icon {
+        width: 18px;
+        height: 18px;
+        flex: none;
+      }
+
+      /* Theme toggle (wired via JS) */
+      .theme-toggle {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--text);
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .theme-toggle:hover {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      }
+      .theme-toggle svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      /* ── Content Grid (Sidebar | Main) ─────────────────────────────── */
+      .grid {
+        display: grid;
+        grid-template-columns: 320px 1fr; /* sidebar | main */
+        gap: var(--space-5);
+        padding: var(--space-5);
+      }
+
+      /* Responsive stack */
+      @media (max-width: 860px) {
+        .header {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+        .avatar {
+          justify-self: center;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .theme-toggle {
+          position: static;
+          justify-self: center;
+          margin-bottom: 10px;
+        }
+      }
+
+      /* ── Sidebar blocks ────────────────────────────────────────────── */
+      .side .block {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: var(--space-4);
+        margin-bottom: var(--space-4);
+      }
+      .block h3 {
+        margin: 0 0 var(--space-3);
+        font-size: 16px;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      /* Skills: label + meter */
+      .skill {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 14px;
+        margin: 12px 0;
+        border-left: 3px solid brown;
+        padding-left: 9px;
+      }
+      .meter {
+        position: relative;
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .meter > span {
+        display: block;
+        height: 100%;
+        width: var(--v, 60%);
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      }
+
+      /* Chips row */
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      /* Sections in main column */
+      .section {
+        margin-bottom: var(--space-5);
+      }
+      .section h2 {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 var(--space-3);
+        font-size: 22px;
+        border-bottom: 2px solid var(--line);
+        padding-bottom: 10px;
+      }
+
+      /* Items (experience/projects/etc.) */
+      .item {
+        padding: 14px 0;
+        border-bottom: 1px dashed var(--line);
+      }
+      .item:last-child {
+        border-bottom: 0;
+      }
+
+      .item .top {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        align-items: baseline;
+      }
+      .item .role {
+        font-weight: 700;
+      }
+      .item .place {
+        color: var(--muted);
+      }
+      .item .when {
+        margin-left: auto;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 640px) {
+        .item .when {
+          margin-left: 0;
+          width: 100%;
+        }
+      }
+
+      ul.clean {
+        margin: 10px 0 0 18px;
+      }
+
+      /* ── Print styles (clean PDF export) ───────────────────────────── */
+      @media print {
+        body {
+          background: #fff;
+        }
+        .wrapper {
+          margin: 0;
+        }
+        .card {
+          box-shadow: none;
+          border: 0;
+        }
+        .header,
+        .grid {
+          padding: 16px;
+        }
+        a {
+          color: #000;
+          text-decoration: none;
+        }
+        .section,
+        .item,
+        .block {
+          break-inside: avoid;
+        }
+        .theme-toggle {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrapper">
+      <article class="card" aria-labelledby="cv-title">
+        <header class="header">
+          <button
+            id="themeToggle"
+            class="theme-toggle"
+            type="button"
+            aria-pressed="false"
+            aria-label="Toggle dark or light theme"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M12 4a1 1 0 0 1 1 1V7a1 1 0 0 1-2 0V5a1 1 0 0 1 1-1Zm0 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8-5a1 1 0 0 1 1 1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1 1 1 0 0 1 1-1ZM3 12a1 1 0 0 1-1 1H0a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1Zm15.66 6.66a1 1 0 0 1 1.41 0l1.42 1.42a1 1 0 0 1-1.42 1.41l-1.41-1.41a1 1 0 0 1 0-1.42ZM4.93 4.93a1 1 0 0 1 1.41 0L7.76 6.34A1 1 0 0 1 6.34 7.76L4.93 6.34a1 1 0 0 1 0-1.41Zm0 14.14a1 1 0 0 1 1.41 0l1.41 1.41A1 1 0 0 1 6.34 22.9l-1.41-1.41a1 1 0 0 1 0-1.41ZM19.07 4.93a1 1 0 0 1 1.41 0 1 1 0 0 1 0 1.41l-1.41 1.41A1 1 0 0 1 17.66 6.34l1.41-1.41Z"
+              />
+            </svg>
+            <span>Toggle Theme</span>
+          </button>
+
+          <div class="avatar" role="img" aria-label="Profile photo">
+            <img
+              src="images/MyImage.jpg"
+              alt="Ahmed portrait"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="title-block">
+            <h1 id="cv-title">Ahmed esam</h1>
+            <p class="muted">
+              Full-Stack Developer • .NET & Angular • Clean Architecture
+            </p>
+
+            <div class="contact" aria-label="Contact information">
+              <a href="mailto:you@example.com" aria-label="Email">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fill="currentColor"
+                    d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5Z"
+                  />
+                </svg>
+                you@example.com
+              </a>
+
+              <span aria-label="Phone">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fill="currentColor"
+                    d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11.7 11.7 0 0 0 3.7.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 8a1 1 0 0 1 1-1h3.4a1 1 0 0 1 1 1 11.7 11.7 0 0 0 .6 3.7 1 1 0 0 1-.24 1Z"
+                  />
+                </svg>
+                +20 1X XXX XXXX
+              </span>
+
+              <a
+                href="https://your-portfolio.example"
+                target="_blank"
+                rel="noopener"
+                aria-label="Website"
+              >
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fill="currentColor"
+                    d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm1 17.9V18h-2v1.9A8 8 0 0 1 4.1 13H6v-2H4.1A8 8 0 0 1 11 4.1V6h2V4.1A8 8 0 0 1 19.9 11H18v2h1.9A8 8 0 0 1 13 19.9Z"
+                  />
+                </svg>
+                your-portfolio.example
+              </a>
+
+              <a
+                href="https://www.linkedin.com/in/your-profile"
+                target="_blank"
+                rel="noopener"
+                aria-label="LinkedIn"
+              >
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fill="currentColor"
+                    d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2.05h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.77 2.64 4.77 6.08V23h-4v-6.67c0-1.59-.03-3.63-2.21-3.63-2.21 0-2.55 1.73-2.55 3.52V23h-4V8z"
+                  />
+                </svg>
+                linkedin.com/in/your-profile
+              </a>
+
+              <a
+                href="https://github.com/your-profile"
+                target="_blank"
+                rel="noopener"
+                aria-label="GitHub"
+              >
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fill="currentColor"
+                    d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.9 1.3 3.6 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.9 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.6.1-3.3 0 0 1-.3 3.4 1.2a11.6 11.6 0 0 1 6.2 0c2.4-1.5 3.4-1.2 3.4-1.2.6 1.7.2 3 .1 3.3.8.9 1.2 2 1.2 3.3 0 4.6-2.7 5.6-5.3 5.9.4.4.7 1 .7 2v2.9c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z"
+                  />
+                </svg>
+                github.com/your-profile
+              </a>
+
+              <span aria-label="Location">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fill="currentColor"
+                    d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z"
+                  />
+                </svg>
+                Cairo, Egypt
+              </span>
+            </div>
+          </div>
+        </header>
+
+        <!-- ── Body: Sidebar + Main content ── -->
+        <div class="grid">
+          <!-- Sidebar -->
+          <aside class="side" aria-label="Sidebar">
+            <section class="block" aria-labelledby="profile-title">
+              <h3 id="profile-title">Profile</h3>
+              <p>
+                Full-stack developer specializing in .NET 9 backend and Angular
+                frontend. Builds production-grade REST APIs using Clean
+                Architecture, JWT authentication, and Entity Framework Core.
+                Passionate about writing maintainable, well-structured code and
+                delivering complete end-to-end solutions.
+              </p>
+            </section>
+
+            <section class="block" aria-labelledby="skills-title">
+              <h3 id="skills-title">Skills</h3>
+
+              <div class="skill">
+                <span>C# / .NET 9</span>
+                <div class="meter" aria-hidden="true">
+                  <span style="--v: 90%"></span>
+                </div>
+              </div>
+              <div class="skill">
+                <span>Angular / TypeScript</span>
+                <div class="meter" aria-hidden="true">
+                  <span style="--v: 75%"></span>
+                </div>
+              </div>
+              <div class="skill">
+                <span>SQL Server / EF Core</span>
+                <div class="meter" aria-hidden="true">
+                  <span style="--v: 85%"></span>
+                </div>
+              </div>
+              <div class="skill">
+                <span>Git / Clean Architecture</span>
+                <div class="meter" aria-hidden="true">
+                  <span style="--v: 80%"></span>
+                </div>
+              </div>
+            </section>
+
+            <section class="block" aria-labelledby="tools-title">
+              <h3 id="tools-title">Tools & Tech</h3>
+              <div
+                class="chips"
+                role="list"
+                aria-label="Tools and technologies"
+              >
+                <span class="tag" role="listitem">Visual Studio</span>
+                <span class="tag" role="listitem">VS Code</span>
+                <span class="tag" role="listitem">Git</span>
+                <span class="tag" role="listitem">GitHub</span>
+                <span class="tag" role="listitem">SQL Server</span>
+                <span class="tag" role="listitem">Postman</span>
+                <span class="tag" role="listitem">Swagger</span>
+                <span class="tag" role="listitem">SignalR</span>
+              </div>
+            </section>
+
+            <section class="block" aria-labelledby="languages-title">
+              <h3 id="languages-title">Languages</h3>
+              <p>Arabic (Native), English (Professional)</p>
+            </section>
+
+            <section class="block" aria-labelledby="interests-title">
+              <h3 id="interests-title">Interests</h3>
+              <p>Clean Architecture, Algorithms, Databases, Open-Source</p>
+            </section>
+          </aside>
+
+          <!-- Main column -->
+          <div class="main" aria-label="Main content">
+            <section class="section" aria-labelledby="projects-title">
+              <h2 id="projects-title">Projects</h2>
+
+              <div class="item">
+                <div class="top">
+                  <div class="role">inventory management system</div>
+                  <div class="place">github.com/your-profile</div>
+                  <div class="when">2028</div>
+                </div>
+                <ul class="clean">
+                  <li>
+                    Full inventory management system built with .NET 9 using
+                    Clean/Onion Architecture and Domain-Driven Design patterns.
+                  </li>
+                  <li>
+                    Implemented JWT + Refresh Tokens, OTP verification,
+                    PBKDF2-SHA512 password hashing, and role-based access
+                    control.
+                  </li>
+                  <li>
+                    Features an Order State Machine and Greedy Reservation logic
+                    for real-world inventory workflows.
+                  </li>
+                </ul>
+              </div>
+
+              <div class="item">
+                <div class="top">
+                  <div class="role">ServiGo — Booking Platform</div>
+                  <div class="place">In Progress</div>
+                  <div class="when">2028</div>
+                </div>
+                <ul class="clean">
+                  <li>
+                    Multi-service booking platform with .NET 9 backend and
+                    Angular frontend using Clean Architecture.
+                  </li>
+                  <li>
+                    Planned integrations: Stripe payments, Cloudinary uploads,
+                    MailKit emails, and SignalR real-time notifications.
+                  </li>
+                  <li>
+                    Secured with JWT auth and role-based authorization for
+                    customers, providers, and admins.
+                  </li>
+                </ul>
+              </div>
+
+              <div class="item">
+                <div class="top">
+                  <div class="role">ClinicDB — Database Design</div>
+                  <div class="place">Academic</div>
+                  <div class="when">2027</div>
+                </div>
+                <ul class="clean">
+                  <li>
+                    Designed a full SQL Server clinic schema with 11 tables,
+                    views, computed columns, and a complete ERD.
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="section" aria-labelledby="experience-title">
+              <h2 id="experience-title">Experience</h2>
+
+              <div class="item">
+                <div class="top">
+                  <div class="role">Freelance Full-Stack Developer</div>
+                  <div class="place">Self-Employed • Remote</div>
+                  <div class="when">2028 — Present</div>
+                </div>
+                <ul class="clean">
+                  <li>
+                    Built and delivered backend REST APIs using .NET 9 and EF
+                    Core for small business clients.
+                  </li>
+                  <li>
+                    Developed Angular frontends consuming custom APIs with
+                    reactive forms and route guards.
+                  </li>
+                  <li>
+                    Applied Clean Architecture and repository pattern across all
+                    projects for maintainability.
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="section" aria-labelledby="education-title">
+              <h2 id="education-title">Education</h2>
+              <div class="item">
+                <div class="top">
+                  <div class="role">B.Sc. in Network & Mobile Technology</div>
+                  <div class="place">Cairo University</div>
+                  <div class="when">2026 — 2030</div>
+                </div>
+                <ul class="clean">
+                  <li>
+                    Coursework: Data Structures, Algorithms, Databases, Computer
+                    Networks, Operating Systems.
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="section" aria-labelledby="certs-title">
+              <h2 id="certs-title">Certifications</h2>
+              <div class="item">
+                <div class="top">
+                  <div class="role">ITI Full-Stack .NET Track</div>
+                  <div class="place">Information Technology Institute</div>
+                  <div class="when">2029</div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="top">
+                  <div class="role">Algorithms & Data Structures</div>
+                  <div class="place">Self-Study • ~200 LeetCode problems</div>
+                  <div class="when">2028</div>
+                </div>
+              </div>
+            </section>
+
+            <section class="section" aria-labelledby="extras-title">
+              <h2 id="extras-title">Volunteer & Extras</h2>
+              <div class="item">
+                <div class="top">
+                  <div class="role">Open Source Contributor</div>
+                  <div class="place">GitHub</div>
+                  <div class="when">2029 — Present</div>
+                </div>
+                <ul class="clean">
+                  <li>
+                    Maintains public .NET repositories demonstrating Clean
+                    Architecture patterns for junior developers.
+                  </li>
+                </ul>
+              </div>
+            </section>
+          </div>
+        </div>
+      </article>
+    </main>
+
+    <script>
+      (function () {
+        const STORAGE_KEY = "theme";
+        const root = document.documentElement;
+        const btn = document.getElementById("themeToggle");
+
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved === "light" || saved === "dark") {
+          root.setAttribute("data-theme", saved);
+        }
+
+        function applyTheme(theme) {
+          root.setAttribute("data-theme", theme);
+          localStorage.setItem(STORAGE_KEY, theme);
+          btn.setAttribute("aria-pressed", String(theme === "dark"));
+          btn.querySelector("span").textContent =
+            theme === "dark" ? "Light Mode" : "Dark Mode";
+        }
+
+        applyTheme(root.getAttribute("data-theme") || "light");
+
+        btn.addEventListener("click", () => {
+          const next =
+            root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+          applyTheme(next);
+        });
+      })();
+    </script>
+  </body>
+</html>
